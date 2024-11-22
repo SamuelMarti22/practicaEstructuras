@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #ifndef NODOARBOL_H
@@ -36,7 +37,7 @@ public:
     void setValorAcumulado(int valorAcumulado);
     int getPesoAcumulado();
     void setPesoAcumulado(int pesoAcumulado);
-
+    vector <nodoArbol *> trazarLinea(nodoArbol* nodo);
 
 };
 

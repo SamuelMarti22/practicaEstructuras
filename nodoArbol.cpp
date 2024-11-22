@@ -52,6 +52,12 @@ void nodoArbol::setDer(nodoArbol *der) {
     this->der = der;
 }
 
+void nodoArbol::setNombre(string nombre) {
+    this->nombre = nombre;
+}
+
+
+
 void nodoArbol::calcularViable(int capacidadMaxima) {
     this->viable = (this->peso <= capacidadMaxima);
 }
@@ -77,5 +83,14 @@ string nodoArbol::getNombre() {
 
 void nodoArbol::imprimir() {
     cout << "Valor: " << valor << ", Peso: " << peso
-            << ", Viable: " << (viable ? "Sí" : "No") << endl;
+            << ", Viable: " << (viable ? "Si" : "No") << endl;
+}
+
+vector<nodoArbol *> nodoArbol::trazarLinea(nodoArbol* nodo) {
+    vector<nodoArbol *> path;
+    while (nodo != nullptr) {
+        path.push_back(nodo);
+        nodo = nodo->getPadre();
+    }
+    return path;
 }

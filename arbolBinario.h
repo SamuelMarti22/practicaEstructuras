@@ -15,11 +15,12 @@ public:
     nodoArbol *getRaiz();
     void setRaiz(nodoArbol *raiz);
     void levelOrder();
-    void preOrder(nodoArbol *nodo);
+    void preOrder(nodoArbol *nodo, vector<nodoArbol*> &valoresViables);
     void levelOrderAndGetLastLevelNodes(vector<nodoArbol *> &ultimoNivel);
     vector<vector<nodoArbol *>> getPathsFromLastLevelNodes();
-    void generarArbolFuerzaBruta(const vector<Objeto> &objetos, int pesoMaximo);
+    void generarArbolFuerzaBruta(const vector<Objeto> &objetos, int pesoMaximo, nodoArbol* raiz);
     void marcarNodosViables(nodoArbol *nodo);
+    void mostrarArbol(nodoArbol *nodo, string prefijo, bool esUltimo);
 };
 
 

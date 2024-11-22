@@ -43,19 +43,21 @@ void arbolBinario::levelOrder() {
     }
 }
 
-void arbolBinario::preOrder(nodoArbol *nodo) {
+void arbolBinario::preOrder(nodoArbol *nodo,  vector<nodoArbol*> &valoresViables) {
     if (nodo == nullptr){
         return; // Caso base: si el nodo es nulo, termina
     }
 
     // Procesa el nodo actual
-    cout << nodo->getValor() << " ";
+    if (nodo->getViable()) {
+        valoresViables.push_back(nodo);
+    }
 
     // Llama recursivamente al subárbol izquierdo
-    preOrder(nodo->getIzq());
+    preOrder(nodo->getIzq(),valoresViables);
 
     // Llama recursivamente al subárbol derecho
-    preOrder(nodo->getDer());
+    preOrder(nodo->getDer(),valoresViables);
 }
 
 void arbolBinario::levelOrderAndGetLastLevelNodes(vector<nodoArbol *> &ultimoNivel) {
@@ -125,12 +127,11 @@ vector<vector<nodoArbol *>> arbolBinario::getPathsFromLastLevelNodes() {
     return paths;
 }
 
-void arbolBinario::generarArbolFuerzaBruta(const vector<Objeto> &objetos, int pesoMaximo) {
+void arbolBinario::generarArbolFuerzaBruta(const vector<Objeto> &objetos, int pesoMaximo, nodoArbol* raiz) {
     queue<nodoArbol *> cola;
-    nodoArbol *raiz = new nodoArbol(0, objetos[0].valor, objetos[0].peso, nullptr);
     cola.push(raiz);
 
-    for (size_t i = 1; i < objetos.size(); ++i) {
+    for (size_t i = 0; i < objetos.size(); ++i) {
         int tamaño = cola.size();
         for (int j = 0; j < tamaño; ++j) {
             nodoArbol *nodoActual = cola.front();
@@ -163,10 +164,26 @@ void arbolBinario::marcarNodosViables(nodoArbol *nodo) {
     // Si el nodo no tiene hijos, es un nodo terminal (hoja)
     if (nodo->getIzq() == nullptr && nodo->getDer() == nullptr) {
         nodo->setViable(true); // Marcamos el nodo como viable
-        cout << nodo->getNombre() << endl;
     }
 
     // Recursión a los subárboles
     marcarNodosViables(nodo->getIzq());
     marcarNodosViables(nodo->getDer());
+}
+
+void arbolBinario::mostrarArbol(nodoArbol *nodo, string prefijo, bool esUltimo) {
+    if (nodo != nullptr) {
+        cout << prefijo;
+        cout << (esUltimo ? "+--" : "|--");
+
+        // Imprimir el valor del nodo
+        cout << nodo->getNombre() << " (" << nodo->getValorAcumulado() << ", " << nodo->getPesoAcumulado() << ")" << endl;
+
+        // Calcular el prefijo para los hijos
+        string nuevoPrefijo = prefijo + (esUltimo ? "    " : "|   ");
+
+        // Llamar recursivamente a los hijos
+        mostrarArbol(nodo->getIzq(), nuevoPrefijo, false);
+        mostrarArbol(nodo->getDer(), nuevoPrefijo, true);
+    }
 }
