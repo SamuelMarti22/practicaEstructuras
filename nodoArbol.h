@@ -28,7 +28,6 @@ public:
     void setViable(bool viable);
     void setIzq(nodoArbol *izq);
     void setDer(nodoArbol *der);
-    void calcularViable(int capacidadMaxima);
     nodoArbol* getPadre();
     void imprimir();
     string getNombre();

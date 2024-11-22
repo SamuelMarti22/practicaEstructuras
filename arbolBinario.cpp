@@ -1,5 +1,4 @@
 #include "arbolBinario.h"
-
 #include <algorithm>
 
 arbolBinario::arbolBinario(nodoArbol *raiz) {
@@ -14,35 +13,7 @@ void arbolBinario::setRaiz(nodoArbol *raiz) {
     this->raiz = raiz;
 }
 
-void arbolBinario::levelOrder() {
-    if (this->raiz == nullptr) {
-        return; // Si el árbol está vacío, no hay nada que recorrer.
-    }
-
-    // Cola que almacena pares de nodo y nivel.
-    queue<pair<nodoArbol *, int>> cola;
-    cola.push({this->raiz, 0}); // Empieza con la raíz en el nivel 0.
-
-    while (!cola.empty()) {
-        // Obtén el nodo y su nivel.
-        auto actual = cola.front();
-        nodoArbol *nodo = actual.first;
-        int nivel = actual.second;
-        cola.pop();
-
-        // Imprime el nodo y su nivel.
-        cout << "Nivel " << nivel << ": " << nodo->getValor() << endl;
-
-        // Agrega los hijos del nodo a la cola con su nivel incrementado.
-        if (nodo->getIzq() != nullptr) {
-            cola.push({nodo->getIzq(), nivel + 1});
-        }
-        if (nodo->getDer() != nullptr) {
-            cola.push({nodo->getDer(), nivel + 1});
-        }
-    }
-}
-
+//Pasamos el valor del vector por referencia para que se modifique en la función
 void arbolBinario::preOrder(nodoArbol *nodo,  vector<nodoArbol*> &valoresViables) {
     if (nodo == nullptr){
         return; // Caso base: si el nodo es nulo, termina
@@ -60,78 +31,13 @@ void arbolBinario::preOrder(nodoArbol *nodo,  vector<nodoArbol*> &valoresViables
     preOrder(nodo->getDer(),valoresViables);
 }
 
-void arbolBinario::levelOrderAndGetLastLevelNodes(vector<nodoArbol *> &ultimoNivel) {
-    if (this->raiz == nullptr) {
-        return; // Si el árbol está vacío, no hay nada que recorrer.
-    }
-
-    // Cola que almacena pares de nodo y nivel.
-    queue<pair<nodoArbol *, int>> cola;
-    cola.push({this->raiz, 0}); // Empieza con la raíz en el nivel 0.
-
-    int nivelActual = 0;
-    int ultimoNivelEncontrado = -1;
-
-    while (!cola.empty()) {
-        // Obtén el nodo y su nivel.
-        auto actual = cola.front();
-        nodoArbol *nodo = actual.first;
-        int nivel = actual.second;
-        cola.pop();
-
-        // Si estamos en un nuevo nivel, vaciamos el vector de nodos del último nivel
-        if (nivel != ultimoNivelEncontrado) {
-            // Si ya hemos encontrado nodos en un nivel anterior, los guardamos
-            if (ultimoNivelEncontrado != -1) {
-                // Aquí los nodos del último nivel ya fueron almacenados
-                ultimoNivel.clear();
-            }
-            ultimoNivelEncontrado = nivel;
-        }
-
-        // Si estamos en el último nivel, agregamos el nodo al vector
-        if (nivel == ultimoNivelEncontrado) {
-            ultimoNivel.push_back(nodo);
-        }
-
-        // Agrega los hijos del nodo a la cola con su nivel incrementado.
-        if (nodo->getIzq() != nullptr) {
-            cola.push({nodo->getIzq(), nivel + 1});
-        }
-        if (nodo->getDer() != nullptr) {
-            cola.push({nodo->getDer(), nivel + 1});
-        }
-    }
-}
-
-vector<vector<nodoArbol *>> arbolBinario::getPathsFromLastLevelNodes() {
-    vector<vector<nodoArbol *>> paths;  // Esta será la lista de listas que almacenará los caminos.
-    vector<nodoArbol *> ultimoNivel;
-
-    // Obtener los nodos del último nivel
-    levelOrderAndGetLastLevelNodes(ultimoNivel);
-
-    // Para cada nodo terminal (del último nivel), obtener el camino hacia la raíz
-    for (nodoArbol *nodo : ultimoNivel) {
-        vector<nodoArbol *> camino;
-        while (nodo != nullptr) {
-            camino.push_back(nodo);
-            nodo = nodo->getPadre();  // Subir al nodo padre
-        }
-
-        // Invertir el camino para tener la ruta desde el nodo terminal hasta la raíz
-        reverse(camino.begin(), camino.end());
-        paths.push_back(camino);
-    }
-
-    return paths;
-}
-
+// Función para crear el árbol binario, teniendo en cuenta la lista de Objetos y el peso máximo y partiendo de un nodo raiz
+//En el árbol, cuando incluímos un objeto, se crea como hijo izquierdo, y se imprime con el prefijo |--; cuando no se incluye, se crea como hijo derecho y se imprime con el prefijo +--.
 void arbolBinario::generarArbolFuerzaBruta(const vector<Objeto> &objetos, int pesoMaximo, nodoArbol* raiz) {
     queue<nodoArbol *> cola;
     cola.push(raiz);
 
-    for (size_t i = 0; i < objetos.size(); ++i) {
+    for (int i = 0; i < objetos.size(); ++i) {
         int tamaño = cola.size();
         for (int j = 0; j < tamaño; ++j) {
             nodoArbol *nodoActual = cola.front();
@@ -155,6 +61,8 @@ void arbolBinario::generarArbolFuerzaBruta(const vector<Objeto> &objetos, int pe
         }
     }
 }
+
+//Funcion para marcar los nodos viables (las hojas del arbol)
 void arbolBinario::marcarNodosViables(nodoArbol *nodo) {
     // Caso base: si el nodo es nulo, no hacer nada
     if (nodo == nullptr) {
@@ -171,19 +79,21 @@ void arbolBinario::marcarNodosViables(nodoArbol *nodo) {
     marcarNodosViables(nodo->getDer());
 }
 
-void arbolBinario::mostrarArbol(nodoArbol *nodo, string prefijo, bool esUltimo) {
+//Función para mostrar el árbol binario
+void arbolBinario::mostrarArbol(nodoArbol *nodo, string prefijo, bool seIncluye) {
     if (nodo != nullptr) {
         cout << prefijo;
-        cout << (esUltimo ? "+--" : "|--");
+        //Si se incluye, mustra |-- sino muestra +--
+        cout << (seIncluye ? "|--" : "+--");
 
         // Imprimir el valor del nodo
         cout << nodo->getNombre() << " (" << nodo->getValorAcumulado() << ", " << nodo->getPesoAcumulado() << ")" << endl;
 
         // Calcular el prefijo para los hijos
-        string nuevoPrefijo = prefijo + (esUltimo ? "    " : "|   ");
+        string nuevoPrefijo = prefijo + (seIncluye ?"|   " : "    ");
 
         // Llamar recursivamente a los hijos
-        mostrarArbol(nodo->getIzq(), nuevoPrefijo, false);
-        mostrarArbol(nodo->getDer(), nuevoPrefijo, true);
+        mostrarArbol(nodo->getIzq(), nuevoPrefijo, true);
+        mostrarArbol(nodo->getDer(), nuevoPrefijo, false);
     }
 }

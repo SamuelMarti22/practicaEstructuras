@@ -56,12 +56,6 @@ void nodoArbol::setNombre(string nombre) {
     this->nombre = nombre;
 }
 
-
-
-void nodoArbol::calcularViable(int capacidadMaxima) {
-    this->viable = (this->peso <= capacidadMaxima);
-}
-
 nodoArbol *nodoArbol::getPadre() {
     return padre;
 }

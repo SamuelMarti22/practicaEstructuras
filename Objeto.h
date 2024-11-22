@@ -6,8 +6,6 @@ using namespace std;
 #ifndef OBJETO_H
 #define OBJETO_H
 
-
-
 class Objeto {
 public:
     string nombre;
